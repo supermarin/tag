@@ -22,7 +22,7 @@ testParsingRgSearchLine :: String -> Test
 testParsingRgSearchLine line = TestCase $
   assertEqual "Test rg search output line is parsed correctly"
   (getOutputType line)
-  (Location (Line 4) (Column 2))
+  (Location (Line 4) (Just $ Column 2))
 
 allRgTests :: IO [Test]
 allRgTests = do

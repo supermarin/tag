@@ -1,4 +1,4 @@
-module LineType (LineType(..), getOutputType) where
+module LineType where
 
 import Control.Monad (msum)
 import Data.Char (isDigit)
@@ -6,7 +6,7 @@ import Data.Maybe (fromMaybe, listToMaybe, mapMaybe)
 import EditorPosition
 import Regex (getCaptureGroups)
 
-data LineType = Location Line Column | FilePath String | Other
+data LineType = Location Line (Maybe Column) | FilePath String | Other
   deriving (Show)
 
 instance Eq LineType where
@@ -22,11 +22,17 @@ getOutputType line = fromMaybe Other
 
 getLocation :: String -> Maybe LineType
 getLocation line =
-  if length matches == 2 && length indexes == 2
-    then Just $ Location (Line $ head indexes) (Column $ indexes !! 1)
+  if length matches == length indexes
+    then getLocationFromIndexes indexes
     else Nothing
   where matches = getCaptureGroups line searchMatchRegex
         indexes = mapMaybe toNum matches
+
+getLocationFromIndexes :: [Int] -> Maybe LineType
+getLocationFromIndexes indexes = case length indexes of
+  2 -> Just $ Location (Line $ head indexes) (Just $ Column $ indexes !! 1)
+  1 -> Just $ Location (Line $ head indexes) Nothing
+  _ -> Nothing
 
 getFilePath :: String -> Maybe LineType
 getFilePath line =

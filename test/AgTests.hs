@@ -22,7 +22,7 @@ testParsingAgSearchLine :: String -> Test
 testParsingAgSearchLine line = TestCase $
   assertEqual "Test ag search output line is parsed correctly"
   (getOutputType line)
-  (Location (Line 4) (Column 2))
+  (Location (Line 4) (Just $ Column 2))
 
 allAgTests :: IO [Test]
 allAgTests = do
